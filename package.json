@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "lucide-react": "^0.544.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.6",
+    "pdfkit": "^0.17.2",
+    "recharts": "^3.2.1"
+  }
+}
