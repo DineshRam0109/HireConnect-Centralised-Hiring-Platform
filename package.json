@@ -8,7 +8,7 @@
     "recharts": "^3.2.1"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node server/server.js",
     "dev": "nodemon server.js"
   }
 }
