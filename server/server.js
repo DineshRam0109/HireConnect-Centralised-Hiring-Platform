@@ -21,12 +21,16 @@ const app = express()
 await connectDB()
 await connectCloudinary()
 
-// Middlewares
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:5173','https://hireconnect-centralised-hiring-platform.onrender.com'
-],
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://hireconnect-centralised-hiring-platform.onrender.com',
+        'https://hireconnect-centralised-hiring-platform-q1ay.onrender.com'
+    ],
     credentials: true
-}))
+}));
+
 
 // Raw body parser for webhooks (before express.json())
 app.use('/webhooks', express.raw({ type: 'application/json' }))
