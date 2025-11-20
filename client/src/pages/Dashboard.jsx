@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { AppContext } from '../context/AppContext'
@@ -7,14 +7,36 @@ const Dashboard = () => {
     const navigate = useNavigate()
     const { companyData, setCompanyData, setCompanyToken } = useContext(AppContext)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+    const [showProfileDropdown, setShowProfileDropdown] = useState(false)
+    const profileDropdownRef = useRef(null)
 
     // function to logout for company
     const logout = () => {
         setCompanyToken(null)
         localStorage.removeItem('companyToken')
         setCompanyData(null)
+        setShowProfileDropdown(false)
         navigate('/')
     }
+
+    // Toggle profile dropdown
+    const toggleProfileDropdown = () => {
+        setShowProfileDropdown(!showProfileDropdown)
+    }
+
+    // Close profile dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+                setShowProfileDropdown(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     useEffect(() => {
         if (companyData) {
@@ -87,36 +109,40 @@ const Dashboard = () => {
                     </div>
 
                     {companyData && (
-                        <div className='flex items-center gap-3 sm:gap-4'>
-                            <p className='max-sm:hidden text-white font-medium text-sm sm:text-base'>
-                                Welcome, {companyData.name}
-                            </p>
-                            <div className='relative group'>
-                                <img 
-                                    className='w-8 h-8 sm:w-10 sm:h-10 border-2 border-white/30 rounded-xl object-cover shadow-lg cursor-pointer hover:border-white/50 transition-all' 
-                                    src={companyData.image} 
-                                    alt={companyData.name} 
-                                />
-                                <div className='absolute hidden group-hover:block top-full right-0 z-50 mt-2 w-48'>
-                                    <div className='bg-white rounded-xl shadow-2xl border border-gray-200 p-2'>
-                                        <div className='p-3 border-b border-gray-100'>
-                                            <p className='font-semibold text-gray-800 text-sm'>{companyData.name}</p>
-                                            <p className='text-xs text-gray-600 truncate'>{companyData.email}</p>
-                                        </div>
-                                        <button 
-                                            onClick={logout}
-                                            className='w-full text-left p-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors flex items-center gap-2 text-sm'
-                                        >
-                                            <svg className='w-4 h-4' fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
-                                            Logout
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+    <div className='flex items-center gap-3 sm:gap-4'>
+        <p className='max-sm:hidden text-white font-medium text-sm sm:text-base'>
+            Welcome, {companyData.name}
+        </p>
+        <div className='relative' ref={profileDropdownRef}>
+            <img 
+                className='w-8 h-8 sm:w-10 sm:h-10 border-2 border-white/30 rounded-xl object-cover shadow-lg cursor-pointer hover:border-white/50 transition-all' 
+                src={companyData.image} 
+                alt={companyData.name}
+                onClick={toggleProfileDropdown}
+            />
+            {showProfileDropdown && (
+                <div className='absolute top-full right-0 z-50 mt-2 w-48'>
+                    <div className='bg-white rounded-xl shadow-2xl border border-gray-200 p-2'>
+                        <div className='p-3 border-b border-gray-100'>
+                            <p className='font-semibold text-gray-800 text-sm'>{companyData.name}</p>
+                            <p className='text-xs text-gray-600 truncate'>{companyData.email}</p>
                         </div>
-                    )}
+                        <button 
+                            onClick={logout}
+                            className='w-full text-left p-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors flex items-center gap-2 text-sm'
+                        >
+                            <svg className='w-4 h-4' fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            )}
+ 
+        </div>
+    </div>
+)}
                 </div>
             </div>
 
